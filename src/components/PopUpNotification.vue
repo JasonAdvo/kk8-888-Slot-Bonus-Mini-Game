@@ -24,7 +24,7 @@ export default {
 
 <style scoped>
 .pop-up-notification {
-	position: fixed;
+	position: absolute;
 	bottom: 0;
 	left: 0;
 	width: 200px;
@@ -65,7 +65,7 @@ export default {
 
 span {
 	color: #FFF;
-	font-size: 12px;
+	font-size: 10px;
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;

@@ -12,6 +12,20 @@
 				<div class="Top_Title_Image_Container">
 					<img class="Title" src="/Images/Title_MY.webp" alt="Big Title">
 				</div>
+
+				<i class="material-icons GT-icons" @click="togglePopup">g_translate</i>
+				<div v-if="isPopupVisible" class="popup">
+					<ul>
+						<li><router-link to="/">中文</router-link></li>
+						<li><router-link to="/my">Malay</router-link></li>
+					</ul>
+				</div>
+
+				<div class="Middle_Ribbon_Container">
+					<img class="left_ribbon" src="/Images/Left_Ribbon.webp" alt="">
+					<img class="right_ribbon" src="/Images/Right_Ribbon.webp" alt="">
+				</div>
+
 				<div class="Inner_Main_Frame_Container">
 					<div class="Main_Frame">
 						<img src="/Images/Main_Inner_Frame.webp" alt="">
@@ -118,6 +132,7 @@
 
 <script>
 import PopUpNotification from '/src/components/PopUpNotification.vue';
+import { Howl } from 'howler';
 
 export default {
 	components: {
@@ -165,16 +180,26 @@ export default {
 			chancesLeft: 2,
 			time: 600000, // Example: 10 minute in milliseconds
 			minutes: '00',
-			seconds: '00'
+			seconds: '00',
+			isPopupVisible: false,
+			bgm: null,       // Store the Audio object
+			isPlayingBGM: false, // Track if BGM is playing
 		};
 	},
 	methods: {
+		togglePopup() {
+			this.isPopupVisible = !this.isPopupVisible;
+		},
 		startBlinking() {
 			this.intervalId = setInterval(() => {
 				this.boxes.forEach(box => box.selected = !box.selected);
 			}, 500); // Blink every 500ms
 		},
 		startGame() {
+
+			// this.pauseBGM();
+			this.playBGM();
+
 			if (this.chancesLeft <= 0) {
 				alert("No more chances left!"); // Notify the user when out of chances
 				return;
@@ -289,17 +314,43 @@ export default {
 			clearInterval(this.interval);
 			this.currentIndex = this.notifications.length; // Stop further notifications
 		},
+		playBGM() {
+
+			if (!this.isPlayingBGM) {
+				// If BGM is not already playing, start playing it
+				this.bgm = new Audio('/audio/Children Game Loop.wav');
+				this.bgm.currentTime = 0;
+				this.bgm.loop = true;  // Set loop to true
+				this.bgm.play();
+				this.isPlayingBGM = true; // Set the flag to true
+			}
+		},
+		pauseBGM() {
+			if (this.isPlayingBGM && this.bgm) {
+				// Pause the BGM if it's playing
+				this.bgm.pause();
+				this.isPlayingBGM = false; // Reset the flag
+			}
+		}
 	},
 	mounted() {
 		this.startBlinking(); // Start blinking when the component is mounted
 		this.updateTime();
 		this.startNotificationSequence();
+		this.playBGM();
 	},
 	beforeDestroy() {
+		this.pauseBGM();
 		if (this.intervalIdTime) {
 			clearInterval(this.intervalIdTime);
 		}
 		clearInterval(this.interval);
+
+	},
+	beforeRouteLeave(to, from, next) {
+		// Pause the BGM before leaving the route
+		this.pauseBGM();
+		next(); // Proceed with the navigation
 	}
 };
 </script>
@@ -326,9 +377,66 @@ export default {
 	/* Place it behind other content */
 }
 
+.container {
+	position: relative;
+}
+
 .Title {
 	width: 80%;
-	max-width: 400px;
+	max-width: 300px;
+	z-index: 50;
+	position: relative;
+}
+
+.GT-icons {
+	position: absolute;
+	top: 20px;
+	right: 15px;
+	color: white;
+	z-index: 51;
+}
+
+.popup {
+	position: absolute;
+	top: 40px;
+	/* Adjust as needed */
+	right: 0;
+	border: 1px solid #ccc;
+	background: white;
+	padding: 10px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+	z-index: 9999;
+}
+
+.popup ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.popup li {
+	margin: 5px 0;
+}
+
+.popup a {
+	text-decoration: none;
+	color: #333;
+}
+
+.Middle_Ribbon_Container img {
+	position: absolute;
+}
+
+.left_ribbon {
+	width: 50%;
+	left: 0;
+	top: -15%;
+}
+
+.right_ribbon {
+	width: 50%;
+	right: 0;
+	top: -13%;
 }
 
 .Inner_Main_Frame_Container {
@@ -418,6 +526,7 @@ export default {
 	/* Remove the outline */
 	box-shadow: none;
 	/* Remove any box-shadow */
+	padding: 0;
 }
 
 .Btm_Time_Chance_Container {
@@ -585,10 +694,6 @@ export default {
 /* Min-Width 380px */
 @media screen and (min-width: 380px) {
 
-	.Top_Title_Image_Container {
-		padding-top: 15%;
-	}
-
 	.lucky {
 		top: -130px;
 	}
@@ -597,12 +702,23 @@ export default {
 		font-size: 18px;
 	}
 
-	.Btm_Time_Chance_Container {
-		margin-top: 15px;
-	}
-
 	.word {
 		font-weight: 16px;
+	}
+}
+
+/* Min-Width 415px */
+@media screen and (min-width: 415px) {
+	.container {
+		padding-top: 20%;
+	}
+
+	.left_ribbon {
+		top: -4%;
+	}
+
+	.right_ribbon {
+		top: -2%;
 	}
 }
 

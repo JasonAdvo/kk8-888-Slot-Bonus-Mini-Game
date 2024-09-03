@@ -12,6 +12,20 @@
 				<div class="Top_Title_Image_Container">
 					<img class="Title" src="/Images/title.webp" alt="Big Title">
 				</div>
+
+				<i class="material-icons GT-icons" @click="togglePopup">g_translate</i>
+				<div v-if="isPopupVisible" class="popup">
+					<ul>
+						<li><router-link to="/">中文</router-link></li>
+						<li><router-link to="/my">Malay</router-link></li>
+					</ul>
+				</div>
+
+				<div class="Middle_Ribbon_Container">
+					<img class="left_ribbon" src="/Images/Left_Ribbon.webp" alt="">
+					<img class="right_ribbon" src="/Images/Right_Ribbon.webp" alt="">
+				</div>
+
 				<div class="Inner_Main_Frame_Container">
 					<div class="Main_Frame">
 						<img src="/Images/Main_Inner_Frame.webp" alt="">
@@ -20,29 +34,30 @@
 								<div class="grid">
 									<!-- Top-left to Top-right boxes -->
 									<div class="box" v-for="(box, index) in boxes.slice(0, 3)" :key="index"
-										:class="{ selected: box.selected }">
+										:class="{ selected: box.selected, blink: box.blinking }">
 										<img :src="box.selected ? box.selectedImage : box.nonSelectedImage" />
 									</div>
 									<!-- Middle-left box -->
 									<div class="box" v-for="(box, index) in boxes.slice(3, 4)" :key="index + 3"
-										:class="{ selected: box.selected }">
+										:class="{ selected: box.selected, blink: box.blinking }">
 										<img :src="box.selected ? box.selectedImage : box.nonSelectedImage" />
 									</div>
 									<!-- Middle (blank space) -->
 									<div class="middle-blank"></div>
 									<!-- Middle-right box -->
 									<div class="box" v-for="(box, index) in boxes.slice(4, 5)" :key="index + 4"
-										:class="{ selected: box.selected }">
+										:class="{ selected: box.selected, blink: box.blinking }">
 										<img :src="box.selected ? box.selectedImage : box.nonSelectedImage" />
 									</div>
 									<!-- Bottom-left to Bottom-right boxes -->
 									<div class="box" v-for="(box, index) in boxes.slice(5, 8)" :key="index + 5"
-										:class="{ selected: box.selected }">
+										:class="{ selected: box.selected, blink: box.blinking }">
 										<img :src="box.selected ? box.selectedImage : box.nonSelectedImage" />
 									</div>
 									<!-- Start button in the middle -->
 									<button @click="startGame" class="middle-button">点击</button>
 								</div>
+
 							</div>
 						</div>
 					</div>
@@ -165,16 +180,25 @@ export default {
 			chancesLeft: 2,
 			time: 600000, // Example: 10 minute in milliseconds
 			minutes: '00',
-			seconds: '00'
+			seconds: '00',
+			isPopupVisible: false,
+			bgm: null,       // Store the Audio object
+			isPlayingBGM: false, // Track if BGM is playing
 		};
 	},
 	methods: {
+		togglePopup() {
+			this.isPopupVisible = !this.isPopupVisible;
+		},
 		startBlinking() {
 			this.intervalId = setInterval(() => {
 				this.boxes.forEach(box => box.selected = !box.selected);
 			}, 500); // Blink every 500ms
 		},
 		startGame() {
+			// this.pauseBGM();
+			this.playBGM();
+
 			if (this.chancesLeft <= 0) {
 				alert("No more chances left!"); // Notify the user when out of chances
 				return;
@@ -186,7 +210,7 @@ export default {
 			this.gameStarted = true;
 
 			// Play the button click sound
-			const playSound = document.getElementById('play-sound');
+			const playSound = new Audio('/audio/Click.wav');
 			playSound.currentTime = 0; // Reset to start of sound
 			playSound.play();
 
@@ -194,14 +218,15 @@ export default {
 			let currentIndex = 0;
 
 			const spinInterval = setInterval(() => {
+
 				this.boxes.forEach(box => box.selected = false);
 				this.boxes[circularOrder[currentIndex]].selected = true;
 				currentIndex = (currentIndex + 1) % circularOrder.length;
 
-				// Play sound effect when the active box changes
-				const spinSound = document.getElementById('spin-sound');
-				spinSound.currentTime = 0; // Reset to start of sound
+				const spinSound = new Audio('/audio/Ding.wav');
+				spinSound.currentTime = 0;
 				spinSound.play();
+
 			}, 100); // Speed of spinning
 
 			// Determine spin time and final index based on chances left
@@ -217,35 +242,45 @@ export default {
 			setTimeout(() => {
 				clearInterval(spinInterval);
 
-				this.boxes.forEach(box => box.selected = false);
-				this.boxes[finalIndex].selected = true;
+				this.boxes.forEach(box => {
+					box.selected = false;
+					box.blinking = false; // Ensure blinking is reset
+				});
 
-				// Reset showLuckyImage
-				this.showLuckyImage = false;
+				const finalBox = this.boxes[finalIndex];
+				finalBox.selected = true;
+				finalBox.blinking = true; // Set blinking flag
 
-				// Show popup with a custom message based on the final index
-				if (finalIndex === 5) {
-					this.popupMessage_1 = "抱歉！请再尝试！";
-					this.popupMessage_2 = "还有 (1) 次免费机会";
-					this.popupButtonText = "再次挑战";
-					this.showPopup = true;
-					// Ensure lucky image is not shown
-					this.showLuckyImage = false;
-				} else if (finalIndex === 0) {
-					this.popupMessage_1 = "恭喜你获得";
-					this.popupMessage_2 = "888% 特别老虎机奖金";
-					this.popupButtonText = "立即领取";
-					this.showPopup = true;
-					this.showLuckyImage = true; // Show the lucky image
+				// After the blink animation completes, show the popup
+				setTimeout(() => {
+					finalBox.blinking = false; // Remove blinking flag
+					this.showLuckyImage = false; // Reset showLuckyImage
 
-					// Play win sound if the user lands on the 0th box
-					const winSound = document.getElementById('win-sound');
-					winSound.currentTime = 0; // Reset to start of sound
-					winSound.play();
-				}
+					// Show popup with a custom message based on the final index
+					if (finalIndex === 5) {
+						this.popupMessage_1 = "抱歉！请再尝试！";
+						this.popupMessage_2 = "还有 (1) 次免费机会";
+						this.popupButtonText = "再次挑战";
+						this.showPopup = true;
+						// Ensure lucky image is not shown
+						this.showLuckyImage = false;
+					} else if (finalIndex === 0) {
+						this.popupMessage_1 = "恭喜你获得";
+						this.popupMessage_2 = "888% 特别老虎机奖金";
+						this.popupButtonText = "立即领取";
+						this.showPopup = true;
+						this.showLuckyImage = true; // Show the lucky image
 
-				// Decrement the chances left after each game
-				this.chancesLeft--;
+						// Play win sound if the user lands on the 0th box
+						const winSound = document.getElementById('win-sound');
+						winSound.currentTime = 0; // Reset to start of sound
+						winSound.play();
+					}
+
+					// Decrement the chances left after each game
+					this.chancesLeft--;
+
+				}, 1000); // Delay showing popup after blinking (0.1s per blink * 3 blinks + buffer)
 
 			}, spinTime); // Dynamic spin time
 		},
@@ -289,17 +324,40 @@ export default {
 			clearInterval(this.interval);
 			this.currentIndex = this.notifications.length; // Stop further notifications
 		},
+		playBGM() {
+			if (!this.isPlayingBGM) {
+				// If BGM is not already playing, start playing it
+				this.bgm = new Audio('/audio/Children Game Loop.wav');
+				this.bgm.currentTime = 0;
+				this.bgm.loop = true;  // Set loop to true
+				this.bgm.play();
+				this.isPlayingBGM = true; // Set the flag to true
+			}
+		},
+		pauseBGM() {
+			if (this.isPlayingBGM && this.bgm) {
+				// Pause the BGM if it's playing
+				this.bgm.pause();
+				this.isPlayingBGM = false; // Reset the flag
+			}
+		}
 	},
 	mounted() {
 		this.startBlinking(); // Start blinking when the component is mounted
 		this.updateTime();
 		this.startNotificationSequence();
+		this.playBGM();
 	},
 	beforeDestroy() {
 		if (this.intervalIdTime) {
 			clearInterval(this.intervalIdTime);
 		}
 		clearInterval(this.interval);
+	},
+	beforeRouteLeave(to, from, next) {
+		// Pause the BGM before leaving the route
+		this.pauseBGM();
+		next(); // Proceed with the navigation
 	}
 };
 </script>
@@ -326,9 +384,66 @@ export default {
 	/* Place it behind other content */
 }
 
+.container {
+	position: relative;
+}
+
 .Title {
 	width: 80%;
 	max-width: 400px;
+	z-index: 50;
+	position: relative;
+}
+
+.GT-icons {
+	position: absolute;
+	top: 20px;
+	right: 15px;
+	color: white;
+	z-index: 51;
+}
+
+.popup {
+	position: absolute;
+	top: 40px;
+	/* Adjust as needed */
+	right: 0;
+	border: 1px solid #ccc;
+	background: white;
+	padding: 10px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+	z-index: 9999;
+}
+
+.popup ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.popup li {
+	margin: 5px 0;
+}
+
+.popup a {
+	text-decoration: none;
+	color: #333;
+}
+
+.Middle_Ribbon_Container img {
+	position: absolute;
+}
+
+.left_ribbon {
+	width: 50%;
+	left: 0;
+	top: -15%;
+}
+
+.right_ribbon {
+	width: 50%;
+	right: 0;
+	top: -13%;
 }
 
 .Inner_Main_Frame_Container {
@@ -418,6 +533,7 @@ export default {
 	/* Remove the outline */
 	box-shadow: none;
 	/* Remove any box-shadow */
+	padding: 0;
 }
 
 .Btm_Time_Chance_Container {
@@ -581,13 +697,19 @@ export default {
 	width: 35%;
 }
 
+/* Add this to your CSS file */
+.blink {
+	animation: blink-animation 0.3s step-start 3;
+}
+
+@keyframes blink-animation {
+	50% {
+		opacity: 0;
+	}
+}
 
 /* Min-Width 380px */
 @media screen and (min-width: 380px) {
-
-	.Top_Title_Image_Container {
-		padding-top: 15%;
-	}
 
 	.lucky {
 		top: -130px;
@@ -597,12 +719,23 @@ export default {
 		font-size: 18px;
 	}
 
-	.Btm_Time_Chance_Container {
-		margin-top: 15px;
-	}
-
 	.word {
 		font-weight: 16px;
+	}
+}
+
+/* Min-Width 415px */
+@media screen and (min-width: 415px) {
+	.container {
+		padding-top: 20%;
+	}
+
+	.left_ribbon {
+		top: -4%;
+	}
+
+	.right_ribbon {
+		top: -2%;
 	}
 }
 
