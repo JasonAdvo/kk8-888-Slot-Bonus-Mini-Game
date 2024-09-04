@@ -16,10 +16,11 @@
 				<i class="material-icons GT-icons" @click="togglePopup">g_translate</i>
 				<div v-if="isPopupVisible" class="popup">
 					<ul>
-						<li><router-link to="/">中文</router-link></li>
-						<li><router-link to="/my">Malay</router-link></li>
+						<li><router-link :to="{ path: '/', query: { lang: 'zh' } }">中文</router-link></li>
+						<li><router-link :to="{ path: '/my', query: { lang: 'my' } }">Malay</router-link></li>
 					</ul>
 				</div>
+
 
 				<div class="Middle_Ribbon_Container">
 					<img class="left_ribbon" src="/Images/Left_Ribbon.webp" alt="">
@@ -184,6 +185,8 @@ export default {
 			isPopupVisible: false,
 			bgm: null,       // Store the Audio object
 			isPlayingBGM: false, // Track if BGM is playing
+			bgmSound: null,
+			isPlayingbgmSound: false,
 		};
 	},
 	methods: {
@@ -196,9 +199,14 @@ export default {
 			}, 500); // Blink every 500ms
 		},
 		startGame() {
-
-			// this.pauseBGM();
 			this.playBGM();
+			// if (!this.isPlayingbgmSound) {
+			// 	this.bgmSound = new Audio('/audio/Children Game Loop.wav');
+			// 	this.bgmSound.currentTime = 0;
+			// 	this.bgmSound.loop = true;
+			// 	this.bgmSound.play();
+			// 	this.isPlayingbgmSound = true;
+			// }
 
 			if (this.chancesLeft <= 0) {
 				alert("No more chances left!"); // Notify the user when out of chances
@@ -329,6 +337,9 @@ export default {
 			if (this.isPlayingBGM && this.bgm) {
 				// Pause the BGM if it's playing
 				this.bgm.pause();
+				if (this.bgmSound && this.isPlayingbgmSound) {
+					this.bgmSound.pause();
+				}
 				this.isPlayingBGM = false; // Reset the flag
 			}
 		}
@@ -337,7 +348,7 @@ export default {
 		this.startBlinking(); // Start blinking when the component is mounted
 		this.updateTime();
 		this.startNotificationSequence();
-		this.playBGM();
+		// this.playBGM();
 	},
 	beforeDestroy() {
 		this.pauseBGM();
