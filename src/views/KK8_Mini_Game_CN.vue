@@ -10,7 +10,6 @@
 		<div class="Game_Background">
 			<div class="container">
 				<div class="Top_Title_Image_Container">
-					<!-- <img class="Title" src="/Images/title.webp" alt="Big Title"> -->
 					<img class="Title" :src="`/Images/title_${this.$i18n.locale}.webp`" alt="Title Image" />
 				</div>
 
@@ -222,48 +221,6 @@ export default {
 				}
 			];
 		},
-		lucky888_B() {
-			return (`/Images/888_B_${this.selectedLang}.webp`)
-		},
-		lucky888_Y() {
-			return (`/Images/888_Y_${this.selectedLang}.webp`)
-		},
-		lucky50_B() {
-			return (`/Images/50_B_${this.selectedLang}.webp`)
-		},
-		lucky50_Y() {
-			return (`/Images/50_Y_${this.selectedLang}.webp`)
-		},
-		lucky388_B() {
-			return (`/Images/388_B_${this.selectedLang}.webp`)
-		},
-		lucky388_Y() {
-			return (`/Images/388_Y_${this.selectedLang}.webp`)
-		},
-		lucky200_B() {
-			return (`/Images/200_B_${this.selectedLang}.webp`)
-		},
-		lucky200_Y() {
-			return (`/Images/200_Y_${this.selectedLang}.webp`)
-		},
-		lucky10_B() {
-			return (`/Images/Free_10_B_${this.selectedLang}.webp`)
-		},
-		lucky10_Y() {
-			return (`/Images/Free_10_Y_${this.selectedLang}.webp`)
-		},
-		lucky25_B() {
-			return (`/Images/25_B_${this.selectedLang}.webp`)
-		},
-		lucky25_Y() {
-			return (`/Images/25_Y_${this.selectedLang}.webp`)
-		},
-		tryAgain_B() {
-			return (`/Images/retry_B_${this.selectedLang}.webp`)
-		},
-		tryAgain_Y() {
-			return (`/Images/retry_Y_${this.selectedLang}.webp`)
-		}
 	},
 	methods: {
 		togglePopup() {
@@ -432,6 +389,7 @@ export default {
 		changeLanguage(lang) {
 			this.selectedLang = lang; // Update selected language
 			switchLanguage(lang);     // Call the function to switch language
+			this.isPopupVisible = false;
 		},
 	},
 	mounted() {
@@ -472,13 +430,17 @@ export default {
 	background-repeat: no-repeat;
 	width: 100vw;
 	max-width: 540px;
-	height: 100vh;
+	min-height: 100vh;
 	position: relative;
 	/* Place it behind other content */
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .container {
 	position: relative;
+	padding: 50px 0 80px 0;
 }
 
 .Title {
@@ -516,10 +478,6 @@ export default {
 
 .popup li {
 	margin: 5px 0;
-}
-
-.popup a {
-	text-decoration: none;
 	color: #333;
 }
 
@@ -782,14 +740,14 @@ export default {
 	position: absolute;
 	bottom: 0;
 	left: 0;
-	width: 35%;
+	width: 30%;
 }
 
 .Right_Present {
 	position: absolute;
 	bottom: 0;
 	right: 0;
-	width: 35%;
+	width: 30%;
 }
 
 /* Add this to your CSS file */
