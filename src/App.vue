@@ -1,7 +1,7 @@
 <template>
-	<!-- <Mini_Game_CH /> -->
+	<Mini_Game_CH />
 	<!-- <Mini_Game_MY /> -->
-	<router-view></router-view>
+	<!-- <router-view></router-view> -->
 </template>
 
 <script setup>

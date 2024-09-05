@@ -1,0 +1,25 @@
+{
+	"click": "点击",
+	"got": "有",
+	"chance": "次免费机会",
+	"count_down": "倒计时",
+	"min": "分",
+	"second": "秒",
+	"popping_user_msg": {
+		"popup_text_1": "恭喜用户 xxx8422 赢得 888% 特别老虎机奖金",
+		"popup_text_2": "恭喜用户 xxx1119 赢得 888% 特别老虎机奖金",
+		"popup_text_3": "恭喜用户 xxx1306 赢得 888% 特别老虎机奖金",
+		"popup_text_4": "恭喜用户 xxx6769 赢得 388% 迎新奖金",
+		"popup_text_5": "恭喜用户 xxx1729 赢得 50% 无限老虎机充值奖金"
+	},
+	"first_popup_msg": {
+		"first_line": "抱歉!请再尝试!",
+		"second_line": "还有 (1) 次免费机会",
+		"try_again": "再次挑战"
+	},
+	"second_popup_msg": {
+		"first_line": "恭喜你获得!",
+		"second_line": "888% 特别老虎机奖金",
+		"get_reward": "立即领取"
+	}
+}

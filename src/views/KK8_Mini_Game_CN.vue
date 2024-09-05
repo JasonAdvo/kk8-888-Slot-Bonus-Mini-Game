@@ -10,17 +10,21 @@
 		<div class="Game_Background">
 			<div class="container">
 				<div class="Top_Title_Image_Container">
-					<img class="Title" src="/Images/title.webp" alt="Big Title">
+					<!-- <img class="Title" src="/Images/title.webp" alt="Big Title"> -->
+					<img class="Title" :src="`/Images/title_${this.$i18n.locale}.webp`" alt="Title Image" />
 				</div>
 
 				<i class="material-icons GT-icons" @click="togglePopup">g_translate</i>
 				<div v-if="isPopupVisible" class="popup">
 					<ul>
-						<li><router-link :to="{ path: '/', query: { lang: 'zh' } }">中文</router-link></li>
-						<li><router-link :to="{ path: '/my', query: { lang: 'my' } }">Malay</router-link></li>
+						<li :class="{ active: selectedLang === 'zh' }" @click="changeLanguage('zh')">
+							Mandarin
+						</li>
+						<li :class="{ active: selectedLang === 'ms' }" @click="changeLanguage('ms')">
+							Malay
+						</li>
 					</ul>
 				</div>
-
 
 				<div class="Middle_Ribbon_Container">
 					<img class="left_ribbon" src="/Images/Left_Ribbon.webp" alt="">
@@ -36,27 +40,31 @@
 									<!-- Top-left to Top-right boxes -->
 									<div class="box" v-for="(box, index) in boxes.slice(0, 3)" :key="index"
 										:class="{ selected: box.selected, blink: box.blinking }">
-										<img :src="box.selected ? box.selectedImage : box.nonSelectedImage" />
+										<img
+											:src="`/Images/${box.selected ? box.selectedImage : box.nonSelectedImage}_${this.$i18n.locale}.webp`" />
 									</div>
 									<!-- Middle-left box -->
 									<div class="box" v-for="(box, index) in boxes.slice(3, 4)" :key="index + 3"
 										:class="{ selected: box.selected, blink: box.blinking }">
-										<img :src="box.selected ? box.selectedImage : box.nonSelectedImage" />
+										<img
+											:src="`/Images/${box.selected ? box.selectedImage : box.nonSelectedImage}_${this.$i18n.locale}.webp`" />
 									</div>
 									<!-- Middle (blank space) -->
 									<div class="middle-blank"></div>
 									<!-- Middle-right box -->
 									<div class="box" v-for="(box, index) in boxes.slice(4, 5)" :key="index + 4"
 										:class="{ selected: box.selected, blink: box.blinking }">
-										<img :src="box.selected ? box.selectedImage : box.nonSelectedImage" />
+										<img
+											:src="`/Images/${box.selected ? box.selectedImage : box.nonSelectedImage}_${this.$i18n.locale}.webp`" />
 									</div>
 									<!-- Bottom-left to Bottom-right boxes -->
 									<div class="box" v-for="(box, index) in boxes.slice(5, 8)" :key="index + 5"
 										:class="{ selected: box.selected, blink: box.blinking }">
-										<img :src="box.selected ? box.selectedImage : box.nonSelectedImage" />
+										<img
+											:src="`/Images/${box.selected ? box.selectedImage : box.nonSelectedImage}_${this.$i18n.locale}.webp`" />
 									</div>
 									<!-- Start button in the middle -->
-									<button @click="startGame" class="middle-button">点击</button>
+									<button @click="startGame" class="middle-button">{{ $t('click') }}</button>
 								</div>
 
 							</div>
@@ -72,26 +80,26 @@
 
 				<div class="Btm_Time_Chance_Container">
 					<div class="Chance_Container">
-						有 ( {{ chancesLeft }} ) 次免费机会
+						{{ $t('got') }} ( {{ chancesLeft }} ) {{ $t('chance') }}
 					</div>
 					<div class="Time_Container">
 
 						<div class="countdown-wrapper">
 							<div class="countdown">
 								<div class="word">
-									倒计时
+									{{ $t('count_down') }}
 								</div>
 								<div class="digit-group">
 									<div class="digit">{{ minutes[0] }}</div>
 									<div class="digit">{{ minutes[1] }}</div>
 								</div>
-								<div class="word"> 分 </div>
+								<div class="word"> {{ $t('min') }} </div>
 								<div class="digit-group">
 									<div class="digit">{{ seconds[0] }}</div>
 									<div class="digit">{{ seconds[1] }}</div>
 								</div>
 								<div class="word">
-									秒
+									{{ $t('second') }}
 								</div>
 							</div>
 						</div>
@@ -105,7 +113,8 @@
 				<div class="popup-card" v-if="showPopup">
 					<div class="relative">
 						<!-- Conditionally render the lucky image -->
-						<img v-if="showLuckyImage" class="lucky" src="/Images/LuckyReward.webp" alt="Lucky Reward">
+						<img v-if="showLuckyImage" class="lucky" :src="`/Images/LuckyReward_${this.$i18n.locale}.webp`"
+							alt="Lucky Reward">
 					</div>
 					<div class="popup-content">
 						<p>{{ popupMessage_1 }}</p>
@@ -113,8 +122,6 @@
 						<button @click="closePopup">{{ popupButtonText }}</button>
 					</div>
 				</div>
-
-
 			</div>
 
 			<div class="RewardList_Container">
@@ -134,6 +141,7 @@
 
 <script>
 import PopUpNotification from '/src/components/PopUpNotification.vue';
+import { switchLanguage } from '/src/i18n/index.js'; // Import the switchLanguage function
 import { ref } from 'vue';
 
 
@@ -144,32 +152,23 @@ export default {
 	data() {
 		return {
 			boxes: [
-				{ selectedImage: '/Images/888_Y.webp', nonSelectedImage: '/Images/888_B.webp', selected: false },
-				{ selectedImage: '/Images/50_Y.webp', nonSelectedImage: '/Images/50_B.webp', selected: false },
-				{ selectedImage: '/Images/retry_Y.webp', nonSelectedImage: '/Images/retry_B.webp', selected: false },
-				{ selectedImage: '/Images/388_Y.webp', nonSelectedImage: '/Images/388_B.webp', selected: false },
-				{ selectedImage: '/Images/200_Y.webp', nonSelectedImage: '/Images/200_B.webp', selected: false },
-				{ selectedImage: '/Images/retry_Y.webp', nonSelectedImage: '/Images/retry_B.webp', selected: false },
-				{ selectedImage: '/Images/Free_10_Y.webp', nonSelectedImage: '/Images/Free_10_B.webp', selected: false },
-				{ selectedImage: '/Images/25_Y.webp', nonSelectedImage: '/Images/25_B.webp', selected: false },
+				{ selectedImage: '888_Y', nonSelectedImage: '888_B', selected: false },
+				{ selectedImage: '50_Y', nonSelectedImage: '50_B', selected: false },
+				{ selectedImage: 'retry_Y', nonSelectedImage: 'retry_B', selected: false },
+				{ selectedImage: '388_Y', nonSelectedImage: '388_B', selected: false },
+				{ selectedImage: '200_Y', nonSelectedImage: '200_B', selected: false },
+				{ selectedImage: 'retry_Y', nonSelectedImage: 'retry_B', selected: false },
+				{ selectedImage: 'Free_10_Y', nonSelectedImage: 'Free_10_B', selected: false },
+				{ selectedImage: '25_Y', nonSelectedImage: '25_B', selected: false },
 			],
-			notifications: [
-				{
-					image1: '/Images/Money_Bg.webp', image2: '/Images/CSY.webp', text: '恭喜用户 xxx8422 赢得 888% 特别老虎机奖金'
-				},
-				{
-					image1: '/Images/Money_Bg.webp', image2: '/Images/Penguin.webp', text: '恭喜用户 xxx1119 赢得 888% 特别老虎机奖金'
-				},
-				{
-					image1: '/Images/Money_Bg.webp', image2: '/Images/Mouse.webp', text: '恭喜用户 xxx1306 赢得 888% 特别老虎机奖金'
-				},
-				{
-					image1: '/Images/Money_Bg.webp', image2: '/Images/Shark.webp', text: '恭喜用户 xxx6769 赢得 388% 迎新奖金'
-				},
-				{
-					image1: '/Images/Money_Bg.webp', image2: '/Images/Panda.webp', text: '恭喜用户 xxx1729 赢得 50% 无限老虎机充值奖金'
-				},
-			],
+			images: {
+				MoneyBg: '/Images/Money_Bg.webp',
+				CSY: '/Images/CSY.webp',
+				Penguin: '/Images/Penguin.webp',
+				Mouse: '/Images/Mouse.webp',
+				Shark: '/Images/Shark.webp',
+				Panda: '/Images/Panda.webp'
+			},
 			currentIndex: 0,
 			interval: null,
 			intervalId: null,
@@ -189,7 +188,82 @@ export default {
 			isPlayingBGM: false, // Track if BGM is playing
 			bgmSound: null,
 			isPlayingbgmSound: false,
+			selectedLang: this.$i18n.locale, // Set the default selected language
 		};
+	},
+	computed: {
+		// Compute the correct image based on the selected language
+		notifications() {
+			return [
+				{
+					image1: this.images.MoneyBg,
+					image2: this.images.CSY,
+					text: this.$t('popping_user_msg.popup_text_1')
+				},
+				{
+					image1: this.images.MoneyBg,
+					image2: this.images.Penguin,
+					text: this.$t('popping_user_msg.popup_text_2')
+				},
+				{
+					image1: this.images.MoneyBg,
+					image2: this.images.Mouse,
+					text: this.$t('popping_user_msg.popup_text_3')
+				},
+				{
+					image1: this.images.MoneyBg,
+					image2: this.images.Shark,
+					text: this.$t('popping_user_msg.popup_text_4')
+				},
+				{
+					image1: this.images.MoneyBg,
+					image2: this.images.Panda,
+					text: this.$t('popping_user_msg.popup_text_5')
+				}
+			];
+		},
+		lucky888_B() {
+			return (`/Images/888_B_${this.selectedLang}.webp`)
+		},
+		lucky888_Y() {
+			return (`/Images/888_Y_${this.selectedLang}.webp`)
+		},
+		lucky50_B() {
+			return (`/Images/50_B_${this.selectedLang}.webp`)
+		},
+		lucky50_Y() {
+			return (`/Images/50_Y_${this.selectedLang}.webp`)
+		},
+		lucky388_B() {
+			return (`/Images/388_B_${this.selectedLang}.webp`)
+		},
+		lucky388_Y() {
+			return (`/Images/388_Y_${this.selectedLang}.webp`)
+		},
+		lucky200_B() {
+			return (`/Images/200_B_${this.selectedLang}.webp`)
+		},
+		lucky200_Y() {
+			return (`/Images/200_Y_${this.selectedLang}.webp`)
+		},
+		lucky10_B() {
+			return (`/Images/Free_10_B_${this.selectedLang}.webp`)
+		},
+		lucky10_Y() {
+			return (`/Images/Free_10_Y_${this.selectedLang}.webp`)
+		},
+		lucky25_B() {
+			return (`/Images/25_B_${this.selectedLang}.webp`)
+		},
+		lucky25_Y() {
+			return (`/Images/25_Y_${this.selectedLang}.webp`)
+		},
+		tryAgain_B() {
+			return (`/Images/retry_B_${this.selectedLang}.webp`)
+		},
+		tryAgain_Y() {
+			return (`/Images/retry_Y_${this.selectedLang}.webp`)
+		}
 	},
 	methods: {
 		togglePopup() {
@@ -268,16 +342,16 @@ export default {
 
 					// Show popup with a custom message based on the final index
 					if (finalIndex === 5) {
-						this.popupMessage_1 = "抱歉！请再尝试！";
-						this.popupMessage_2 = "还有 (1) 次免费机会";
-						this.popupButtonText = "再次挑战";
+						this.popupMessage_1 = this.$t('first_popup_msg.first_line');
+						this.popupMessage_2 = this.$t('first_popup_msg.second_line');
+						this.popupButtonText = this.$t('first_popup_msg.try_again');
 						this.showPopup = true;
 						// Ensure lucky image is not shown
 						this.showLuckyImage = false;
 					} else if (finalIndex === 0) {
-						this.popupMessage_1 = "恭喜你获得";
-						this.popupMessage_2 = "888% 特别老虎机奖金";
-						this.popupButtonText = "立即领取";
+						this.popupMessage_1 = this.$t('second_popup_msg.first_line');
+						this.popupMessage_2 = this.$t('second_popup_msg.second_line');
+						this.popupButtonText = this.$t('second_popup_msg.get_reward');
 						this.showPopup = true;
 						this.showLuckyImage = true; // Show the lucky image
 
@@ -355,12 +429,17 @@ export default {
 				this.isPlayingBGM = false; // Reset the flag
 			}
 		},
+		changeLanguage(lang) {
+			this.selectedLang = lang; // Update selected language
+			switchLanguage(lang);     // Call the function to switch language
+		},
 	},
 	mounted() {
 		this.startBlinking(); // Start blinking when the component is mounted
 		this.updateTime();
 		this.startNotificationSequence();
 		// this.playBGM();
+		console.log(this.$i18n.locale)
 	},
 	beforeDestroy() {
 		if (this.intervalIdTime) {
@@ -450,12 +529,14 @@ export default {
 
 .left_ribbon {
 	width: 50%;
+	height: 100%;
 	left: 0;
 	top: -15%;
 }
 
 .right_ribbon {
 	width: 50%;
+	height: 100%;
 	right: 0;
 	top: -13%;
 }
@@ -740,9 +821,9 @@ export default {
 
 /* Min-Width 415px */
 @media screen and (min-width: 415px) {
-	.container {
+	/* .container {
 		padding-top: 20%;
-	}
+	} */
 
 	.left_ribbon {
 		top: -4%;

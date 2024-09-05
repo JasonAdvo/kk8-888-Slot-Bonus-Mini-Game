@@ -6,13 +6,14 @@
 	"scripts": {
 		"dev": "vite --host",
 		"build": "vite build",
-		"preview": "vite preview"
+		"preview": "vite preview --host"
 	},
 	"dependencies": {
 		"howler": "^2.2.4",
 		"material-design-icons-iconfont": "^6.7.0",
 		"vue": "^3.4.37",
 		"vue-countdown": "^1.0.4",
+		"vue-i18n": "^9.14.0",
 		"vue-router": "^4.4.3"
 	},
 	"devDependencies": {

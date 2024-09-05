@@ -1,0 +1,25 @@
+{
+	"click": "KLIK",
+	"got": "Ada",
+	"chance": "Peluang Percuma",
+	"count_down": "Tertinggal",
+	"min": "min",
+	"second": "saat",
+	"popping_user_msg": {
+		"popup_text_1": "Tahniah pengguna xxx8422 menang888% Bonus",
+		"popup_text_2": "Tahniah pengguna xxx1119 menang 888% Bonus",
+		"popup_text_3": "Tahniah penggunar xxx1306 menang 888% Bonus",
+		"popup_text_4": "Tahniah pengguna xxx6769 menang 388% Welcome",
+		"popup_text_5": "Tahniah pengguna xxx1729 menang 50% Bonus Slot Tanpa Had"
+	},
+	"first_popup_msg": {
+		"first_line": "Maaf! Sila Cuba Lagi!",
+		"second_line": "Masih Ada (1) Peluang Percuma",
+		"try_again": "Cuba Lagi"
+	},
+	"second_popup_msg": {
+		"first_line": "Tahniah!",
+		"second_line": "Dapat 888% Bonus!",
+		"get_reward": "Dapatkan Sekarang"
+	}
+}
