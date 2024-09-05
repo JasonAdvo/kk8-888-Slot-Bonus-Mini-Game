@@ -397,7 +397,6 @@ export default {
 		this.updateTime();
 		this.startNotificationSequence();
 		// this.playBGM();
-		console.log(this.$i18n.locale)
 	},
 	beforeDestroy() {
 		if (this.intervalIdTime) {
