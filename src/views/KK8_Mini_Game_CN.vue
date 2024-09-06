@@ -784,62 +784,23 @@ export default {
 	}
 }
 
-/* .click_pulse {
-
-	transition: width 0.5s ease;
-}
-
-.click_pulse:hover {
-	width: 90%;
-} */
-
 .click_pulse {
-	width: 90%;
-	/* Starting width */
 	animation: pulse 1.5s ease-in-out infinite;
-	/* Infinite animation */
 }
 
 @keyframes pulse {
 	0% {
 		width: 80%;
-		/* Start with 90% width */
 	}
 
 	50% {
 		width: 90%;
-		/* Expand to 100% width */
 	}
 
 	100% {
 		width: 80%;
-		/* Return to 90% width */
 	}
 }
-
-/* @-webkit-keyframes pulse {
-
-	0%,
-	100% {
-		width: 80%;
-	}
-
-	50% {
-		width: 90%;
-	}
-}
-
-@keyframes pulse {
-
-	0%,
-	100% {
-		width: 80%;
-	}
-
-	50% {
-		width: 90%;
-	}
-} */
 
 /* Min-Width 380px */
 @media screen and (min-width: 380px) {
