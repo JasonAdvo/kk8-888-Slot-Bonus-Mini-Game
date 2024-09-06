@@ -63,7 +63,8 @@
 											:src="`/Images/${box.selected ? box.selectedImage : box.nonSelectedImage}_${this.$i18n.locale}.webp`" />
 									</div>
 									<!-- Start button in the middle -->
-									<button @click="startGame" class="middle-button">{{ $t('click') }}</button>
+									<button @click="startGame" class="middle-button" :disabled="buttonDisabled">{{
+										$t('click') }}</button>
 								</div>
 
 							</div>
@@ -168,10 +169,12 @@ export default {
 				Shark: '/Images/Shark.webp',
 				Panda: '/Images/Panda.webp'
 			},
+			buttonDisabled: false,
 			currentIndex: 0,
 			interval: null,
 			intervalId: null,
 			intervalIdTime: null,
+			finalIndex: null,
 			showPopup: false,
 			popupMessage_1: '',
 			popupMessage_2: '',
@@ -187,7 +190,7 @@ export default {
 			isPlayingBGM: false, // Track if BGM is playing
 			bgmSound: null,
 			isPlayingbgmSound: false,
-			selectedLang: this.$i18n.locale, // Set the default selected language
+			selectedLang: this.$i18n.locale, // Set the default selected language,
 		};
 	},
 	computed: {
@@ -232,13 +235,7 @@ export default {
 			}, 500); // Blink every 500ms
 		},
 		startGame() {
-
-			// const hasBGMPlayed = ref(sessionStorage.getItem('hasBGMPlayed') === 'true');
-			// console.log(hasBGMPlayed.value)
-
-			// if (!hasBGMPlayed.value) {
 			this.playBGM();
-			// }
 
 			if (this.chancesLeft <= 0) {
 				alert("No more chances left!"); // Notify the user when out of chances
@@ -250,6 +247,9 @@ export default {
 			}
 			this.gameStarted = true;
 
+			// Disable the button after clicking
+			this.buttonDisabled = true;
+
 			// Play the button click sound
 			const playSound = new Audio('/audio/Click.wav');
 			playSound.currentTime = 0; // Reset to start of sound
@@ -259,7 +259,6 @@ export default {
 			let currentIndex = 0;
 
 			const spinInterval = setInterval(() => {
-
 				this.boxes.forEach(box => box.selected = false);
 				this.boxes[circularOrder[currentIndex]].selected = true;
 				currentIndex = (currentIndex + 1) % circularOrder.length;
@@ -267,17 +266,16 @@ export default {
 				const spinSound = new Audio('/audio/Ding.wav');
 				spinSound.currentTime = 0;
 				spinSound.play();
-
 			}, 100); // Speed of spinning
 
 			// Determine spin time and final index based on chances left
-			let spinTime, finalIndex;
+			let spinTime;
 			if (this.chancesLeft === 2) {
 				spinTime = 3100; // First spin time
-				finalIndex = 5; // First chance results in box 5
+				this.finalIndex = 5; // First chance results in box 5
 			} else if (this.chancesLeft === 1) {
 				spinTime = 3300; // Second spin time
-				finalIndex = 0; // Second chance results in box 0
+				this.finalIndex = 0; // Second chance results in box 0
 			}
 
 			setTimeout(() => {
@@ -288,7 +286,7 @@ export default {
 					box.blinking = false; // Ensure blinking is reset
 				});
 
-				const finalBox = this.boxes[finalIndex];
+				const finalBox = this.boxes[this.finalIndex];
 				finalBox.selected = true;
 				finalBox.blinking = true; // Set blinking flag
 
@@ -298,14 +296,14 @@ export default {
 					this.showLuckyImage = false; // Reset showLuckyImage
 
 					// Show popup with a custom message based on the final index
-					if (finalIndex === 5) {
+					if (this.finalIndex === 5) {
 						this.popupMessage_1 = this.$t('first_popup_msg.first_line');
 						this.popupMessage_2 = this.$t('first_popup_msg.second_line');
 						this.popupButtonText = this.$t('first_popup_msg.try_again');
 						this.showPopup = true;
 						// Ensure lucky image is not shown
 						this.showLuckyImage = false;
-					} else if (finalIndex === 0) {
+					} else if (this.finalIndex === 0) {
 						this.popupMessage_1 = this.$t('second_popup_msg.first_line');
 						this.popupMessage_2 = this.$t('second_popup_msg.second_line');
 						this.popupButtonText = this.$t('second_popup_msg.get_reward');
@@ -313,7 +311,7 @@ export default {
 						this.showLuckyImage = true; // Show the lucky image
 
 						// Play win sound if the user lands on the 0th box
-						const winSound = document.getElementById('win-sound');
+						const winSound = new Audio('/audio/Win.wav');
 						winSound.currentTime = 0; // Reset to start of sound
 						winSound.play();
 					}
@@ -329,9 +327,12 @@ export default {
 			this.showPopup = false;
 			// Optionally reset the lucky image flag
 			this.showLuckyImage = false;
-		},
-		closePopup() {
-			this.showPopup = false;
+			this.buttonDisabled = false;
+
+			// Check if finalIndex was 0, then redirect
+			if (this.finalIndex === 0) {
+				window.open("https://kk8.my/register", "_blank"); // Redirect to the desired link in new tab
+			}
 		},
 		updateTime() {
 			const now = Date.now();
@@ -397,6 +398,7 @@ export default {
 		this.updateTime();
 		this.startNotificationSequence();
 		// this.playBGM();
+		console.log(this.$i18n.locale)
 	},
 	beforeDestroy() {
 		if (this.intervalIdTime) {
@@ -455,6 +457,7 @@ export default {
 	right: 15px;
 	color: white;
 	z-index: 51;
+	cursor: pointer;
 }
 
 .popup {
@@ -467,6 +470,7 @@ export default {
 	padding: 10px;
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 	z-index: 9999;
+
 }
 
 .popup ul {
@@ -478,6 +482,7 @@ export default {
 .popup li {
 	margin: 5px 0;
 	color: #333;
+	cursor: pointer;
 }
 
 .Middle_Ribbon_Container img {

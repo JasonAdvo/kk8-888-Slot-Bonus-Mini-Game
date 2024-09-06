@@ -2,15 +2,27 @@ import { createI18n } from 'vue-i18n';
 import zhMessages from '/src/i18n/locales/zh.json';
 import msMessages from '/src/i18n/locales/ms.json';
 
-function getBrowserLocale() {
-	const navigatorLang = navigator.language || navigator.userLanguage;
-	const locale = navigatorLang.split('-')[0]; // Extract language code (e.g., 'zh', 'ms')
-	return locale;
+function detectUserLocale() {
+	const browserLanguage = navigator.language || navigator.userLanguage; // Get the user's browser/system language
+
+	// If the language is Chinese (zh), set the locale to 'zh'
+	if (browserLanguage.startsWith('zh')) {
+		return 'zh';
+	}
+
+	// If the language is English (en) or Malay (ms), set the locale to 'ms'
+	if (browserLanguage.startsWith('en') || browserLanguage.startsWith('ms')) {
+		return 'ms';
+	}
+
+	// Default to 'zh' if no match
+	return 'zh';
 }
 
 // Create i18n instance with messages
 const i18n = createI18n({
-	locale: localStorage.getItem('user-locale') || getBrowserLocale(), // Set default locale from localStorage or browser
+	// locale: localStorage.getItem('user-locale') || getBrowserLocale(), // Set default locale from localStorage or browser
+	locale: detectUserLocale(),
 	fallbackLocale: 'zh', // Default fallback language (Mandarin)
 	messages: {
 		zh: zhMessages,

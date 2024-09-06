@@ -84,6 +84,7 @@ span {
 	right: 6px;
 	top: -6px;
 	padding: 0;
+	outline: none;
 }
 
 .fade-enter-active,

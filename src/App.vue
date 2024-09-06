@@ -1,12 +1,9 @@
 <template>
-	<Mini_Game_CH />
-	<!-- <Mini_Game_MY /> -->
-	<!-- <router-view></router-view> -->
+	<Mini_Game />
 </template>
 
 <script setup>
-import Mini_Game_CH from './views/KK8_Mini_Game_CN.vue'
-import Mini_Game_MY from './views/KK8_Mini_Game_MY.vue'
+import Mini_Game from './views/KK8_Mini_Game_CN.vue'
 </script>
 
 <style scoped>
