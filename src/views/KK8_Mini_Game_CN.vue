@@ -17,9 +17,15 @@
 				<div v-if="isPopupVisible" class="popup">
 					<ul>
 						<li :class="{ active: selectedLang === 'zh' }" @click="changeLanguage('zh')">
-							Mandarin
+							<div class="Flag_Size">
+								<img src="/Images/china.webp" alt="China_Flag">
+							</div>
+							中文
 						</li>
 						<li :class="{ active: selectedLang === 'ms' }" @click="changeLanguage('ms')">
+							<div class="Flag_Size">
+								<img src="/Images/malay.webp" alt="Malaysia_Flag">
+							</div>
 							Malay
 						</li>
 					</ul>
@@ -63,8 +69,10 @@
 											:src="`/Images/${box.selected ? box.selectedImage : box.nonSelectedImage}_${this.$i18n.locale}.webp`" />
 									</div>
 									<!-- Start button in the middle -->
-									<button @click="startGame" class="middle-button" :disabled="buttonDisabled">{{
-										$t('click') }}</button>
+									<button @click="startGame" class="middle-button" :disabled="buttonDisabled">
+										<img class="click_pulse" :src="`/Images/Click_${this.$i18n.locale}.webp`"
+											alt="click">
+									</button>
 								</div>
 
 							</div>
@@ -360,7 +368,7 @@ export default {
 				if (this.currentIndex >= this.notifications.length) {
 					this.currentIndex = 0; // Reset to start the loop again
 				}
-			}, 2000); // 2 seconds interval
+			}, 4000); // 2 seconds interval
 		},
 		handleClose() {
 			clearInterval(this.interval);
@@ -441,7 +449,7 @@ export default {
 
 .container {
 	position: relative;
-	padding: 50px 0 80px 0;
+	padding-bottom: 80px;
 }
 
 .Title {
@@ -462,7 +470,7 @@ export default {
 
 .popup {
 	position: absolute;
-	top: 40px;
+	top: 45px;
 	/* Adjust as needed */
 	right: 0;
 	border: 1px solid #ccc;
@@ -470,6 +478,7 @@ export default {
 	padding: 10px;
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 	z-index: 9999;
+	border-radius: 5px;
 
 }
 
@@ -483,6 +492,16 @@ export default {
 	margin: 5px 0;
 	color: #333;
 	cursor: pointer;
+	display: flex;
+	gap: 5px;
+}
+
+.Flag_Size {
+	width: 25px;
+}
+
+.popup img {
+	width: 100%;
 }
 
 .Middle_Ribbon_Container img {
@@ -762,6 +781,36 @@ export default {
 @keyframes blink-animation {
 	50% {
 		opacity: 0;
+	}
+}
+
+.click_pulse {
+	-webkit-animation: pulse 1s infinite;
+	animation: pulse 1s infinite;
+	/* transition: width 0.5s ease; */
+}
+
+@-webkit-keyframes pulse {
+
+	0%,
+	100% {
+		width: 80%;
+	}
+
+	50% {
+		width: 90%;
+	}
+}
+
+@keyframes pulse {
+
+	0%,
+	100% {
+		width: 80%;
+	}
+
+	50% {
+		width: 90%;
 	}
 }
 
